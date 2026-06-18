@@ -351,7 +351,7 @@ export default function BrowneEncomendas() {
                       <label style={labelStyle}>Data de entrega *</label>
                       <input type="date" value={form.dataEntrega} min={hoje()}
                         onChange={e => setForm(f => ({ ...f, dataEntrega: e.target.value }))}
-                        style={inputStyle} />
+                        style={dateInputStyle} />
                     </div>
                     <div>
                       <label style={labelStyle}>Status</label>
@@ -611,6 +611,15 @@ const inputStyle = {
   border: "1.5px solid #DDD0C4", fontFamily: "'Montserrat', sans-serif",
   fontSize: 13, outline: "none", boxSizing: "border-box", color: "#333",
   background: "#FDFAF7",
+};
+const dateInputStyle = {
+  ...inputStyle,
+  height: 38,
+  lineHeight: "20px",
+  WebkitAppearance: "none",
+  appearance: "none",
+  colorScheme: "light",
+  display: "block",
 };
 const btnQtdStyle = (cor) => ({
   width: 30, height: 30, borderRadius: 6, border: `1.5px solid ${cor}`,
