@@ -276,7 +276,7 @@ export default function App() {
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
       {/* HEADER */}
-      <header style={{background:C.marrom,padding:"18px 24px 12px",textAlign:"center"}}>
+      <header style={{background:C.marrom,paddingTop:"calc(env(safe-area-inset-top) + 18px)",paddingBottom:"12px",paddingLeft:"24px",paddingRight:"24px",textAlign:"center"}}>
         <p style={{fontFamily:"'Cormorant Garamond',serif",color:C.creme,fontSize:26,fontWeight:700,margin:0,letterSpacing:3}}>BROWNÊ</p>
         <p style={{color:C.cremedark,fontSize:9,letterSpacing:2,margin:"3px 0 0",textTransform:"uppercase"}}>Gestão de Vendas & Encomendas</p>
       </header>
