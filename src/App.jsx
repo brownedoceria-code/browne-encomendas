@@ -291,19 +291,22 @@ export default function App() {
 
     // — Ranking por local de venda (30 dias) —
     const porLocal={};
-    [...LOCAIS_VENDA,"Não informado"].forEach(l=>{ porLocal[l]={fat:0,qtd:0}; });
+    [...LOCAIS_VENDA,"Não informado"].forEach(l=>{ porLocal[l]={fat:0,qtd:0,prods:{ninho:0,doceleit:0,brigadeiro:0,miettes:0}}; });
     venPer.forEach(v=>{
       const l=v.localVenda||"Não informado";
-      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0};
-      PRODUTOS.forEach(p=>{ const q=+v.itens[p.id].qtd||0,vl=+v.itens[p.id].valor||0; porLocal[l].fat+=q*vl; porLocal[l].qtd+=q; });
+      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0,prods:{ninho:0,doceleit:0,brigadeiro:0,miettes:0}};
+      PRODUTOS.forEach(p=>{ const q=+v.itens[p.id].qtd||0,vl=+v.itens[p.id].valor||0; porLocal[l].fat+=q*vl; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
     });
     encPer.forEach(e=>{
       const l=e.localVenda||"Não informado";
-      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0};
-      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*PRECO_PADRAO; porLocal[l].qtd+=q; });
+      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0,prods:{ninho:0,doceleit:0,brigadeiro:0,miettes:0}};
+      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*PRECO_PADRAO; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
     });
     const rankingLocais=Object.entries(porLocal)
-      .map(([local,d])=>({local,...d}))
+      .map(([local,d])=>{
+        const topProd = PRODUTOS.reduce((best,p)=>d.prods[p.id]>(d.prods[best.id]||0)?p:best, PRODUTOS[0]);
+        return {local,...d,topProd:d.qtd>0?topProd:null};
+      })
       .filter(d=>d.qtd>0)
       .sort((a,b)=>b.fat-a.fat);
 
@@ -754,9 +757,14 @@ export default function App() {
                         <span style={{fontSize:10,color:"#aaa",marginLeft:6}}>{l.qtd} un. · {totalFat>0?Math.round((l.fat/totalFat)*100):0}%</span>
                       </div>
                     </div>
-                    <div style={{background:"#F0E8DF",borderRadius:99,height:6,overflow:"hidden"}}>
+                    <div style={{background:"#F0E8DF",borderRadius:99,height:6,overflow:"hidden",marginBottom:6}}>
                       <div style={{width:`${(l.fat/maxFat)*100}%`,background:C.caramelo,height:"100%",borderRadius:99,transition:"width .4s"}}/>
                     </div>
+                    {l.topProd&&(()=>{ const p=PRODUTOS.find(x=>x.id===l.topProd.id); return p?(
+                      <span style={{fontSize:10,color:p.cor,fontWeight:600}}>
+                        {p.emoji} Mais vendido: {p.label} ({l.prods[p.id]} un.)
+                      </span>
+                    ):null; })()}
                   </div>
                 ));
               })()}
