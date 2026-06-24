@@ -28,6 +28,7 @@ const CATEGORIAS_DESP = [
 ];
 
 const FORNECEDORES = ["Assaí","Vivian Festas","Supermarket","Guanabara","Terê Frutas","Outros"];
+const LOCAIS_VENDA = ["Nova Vida","UNITED","Academia","Studio","Outros"];
 
 const PRECO_PADRAO = 10;
 const STATUS = ["Pendente","Confirmado","Entregue","Cancelado"];
@@ -60,15 +61,15 @@ function semanaAtual() {
   };
 }
 
-function dbEnc(r) { return { id:r.id, nome:r.nome, telefone:r.telefone||"", dataEntrega:r.data_entrega, status:r.status, observacoes:r.observacoes||"", qtd:{ ninho:r.qtd_ninho||0, doceleit:r.qtd_doceleit||0, brigadeiro:r.qtd_brigadeiro||0, miettes:r.qtd_miettes||0 } }; }
-function encDb(e) { return { id:e.id, nome:e.nome, telefone:e.telefone||null, data_entrega:e.dataEntrega, status:e.status, observacoes:e.observacoes||null, qtd_ninho:+e.qtd.ninho||0, qtd_doceleit:+e.qtd.doceleit||0, qtd_brigadeiro:+e.qtd.brigadeiro||0, qtd_miettes:+e.qtd.miettes||0 }; }
-function dbVen(r) { return { id:r.id, data:r.data, observacoes:r.observacoes||"", itens:{ ninho:{qtd:r.qtd_ninho||0,valor:+r.val_ninho||0}, doceleit:{qtd:r.qtd_doceleit||0,valor:+r.val_doceleit||0}, brigadeiro:{qtd:r.qtd_brigadeiro||0,valor:+r.val_brigadeiro||0}, miettes:{qtd:r.qtd_miettes||0,valor:+r.val_miettes||0} } }; }
-function venDb(v) { return { id:v.id, data:v.data, observacoes:v.observacoes||null, qtd_ninho:+v.itens.ninho.qtd||0, val_ninho:+v.itens.ninho.valor||0, qtd_doceleit:+v.itens.doceleit.qtd||0, val_doceleit:+v.itens.doceleit.valor||0, qtd_brigadeiro:+v.itens.brigadeiro.qtd||0, val_brigadeiro:+v.itens.brigadeiro.valor||0, qtd_miettes:+v.itens.miettes.qtd||0, val_miettes:+v.itens.miettes.valor||0 }; }
+function dbEnc(r) { return { id:r.id, nome:r.nome, telefone:r.telefone||"", dataEntrega:r.data_entrega, status:r.status, observacoes:r.observacoes||"", localVenda:r.local_venda||"", qtd:{ ninho:r.qtd_ninho||0, doceleit:r.qtd_doceleit||0, brigadeiro:r.qtd_brigadeiro||0, miettes:r.qtd_miettes||0 } }; }
+function encDb(e) { return { id:e.id, nome:e.nome, telefone:e.telefone||null, data_entrega:e.dataEntrega, status:e.status, observacoes:e.observacoes||null, local_venda:e.localVenda||null, qtd_ninho:+e.qtd.ninho||0, qtd_doceleit:+e.qtd.doceleit||0, qtd_brigadeiro:+e.qtd.brigadeiro||0, qtd_miettes:+e.qtd.miettes||0 }; }
+function dbVen(r) { return { id:r.id, data:r.data, observacoes:r.observacoes||"", localVenda:r.local_venda||"", itens:{ ninho:{qtd:r.qtd_ninho||0,valor:+r.val_ninho||0}, doceleit:{qtd:r.qtd_doceleit||0,valor:+r.val_doceleit||0}, brigadeiro:{qtd:r.qtd_brigadeiro||0,valor:+r.val_brigadeiro||0}, miettes:{qtd:r.qtd_miettes||0,valor:+r.val_miettes||0} } }; }
+function venDb(v) { return { id:v.id, data:v.data, observacoes:v.observacoes||null, local_venda:v.localVenda||null, qtd_ninho:+v.itens.ninho.qtd||0, val_ninho:+v.itens.ninho.valor||0, qtd_doceleit:+v.itens.doceleit.qtd||0, val_doceleit:+v.itens.doceleit.valor||0, qtd_brigadeiro:+v.itens.brigadeiro.qtd||0, val_brigadeiro:+v.itens.brigadeiro.valor||0, qtd_miettes:+v.itens.miettes.qtd||0, val_miettes:+v.itens.miettes.valor||0 }; }
 function dbDes(r) { return { id:r.id, data:r.data, categoria:r.categoria, fornecedor:r.fornecedor||"", valor:+r.valor||0, observacoes:r.observacoes||"" }; }
 function desDb(d) { return { id:d.id, data:d.data, categoria:d.categoria, fornecedor:d.fornecedor||null, valor:+d.valor||0, observacoes:d.observacoes||null }; }
 
-function resetEnc() { return { nome:"", telefone:"", dataEntrega:"", observacoes:"", status:"Pendente", qtd:{ninho:0,doceleit:0,brigadeiro:0,miettes:0} }; }
-function resetVen() { return { data:hoje(), observacoes:"", itens:{ ninho:{qtd:0,valor:PRECO_PADRAO}, doceleit:{qtd:0,valor:PRECO_PADRAO}, brigadeiro:{qtd:0,valor:PRECO_PADRAO}, miettes:{qtd:0,valor:PRECO_PADRAO} } }; }
+function resetEnc() { return { nome:"", telefone:"", dataEntrega:"", observacoes:"", localVenda:"", status:"Pendente", qtd:{ninho:0,doceleit:0,brigadeiro:0,miettes:0} }; }
+function resetVen() { return { data:hoje(), observacoes:"", localVenda:"", itens:{ ninho:{qtd:0,valor:PRECO_PADRAO}, doceleit:{qtd:0,valor:PRECO_PADRAO}, brigadeiro:{qtd:0,valor:PRECO_PADRAO}, miettes:{qtd:0,valor:PRECO_PADRAO} } }; }
 function resetDes() { return { data:hoje(), categoria:"ingredientes", fornecedor:"Assaí", valor:"", observacoes:"" }; }
 
 // ─── Gráfico scrollável ───────────────────────────────────────────────────────
@@ -288,7 +289,25 @@ export default function App() {
 
     const ranking=PRODUTOS.map(p=>({...p,qtd:porProduto[p.id].qtd,rec:porProduto[p.id].rec})).sort((a,b)=>b.qtd-a.qtd);
 
-    return { sem, fatSem, despSem, liqSem, fat30, desp30, liq30, unid30, ticket, serie, ranking, nVen:venPer.length, nEnc:encPer.length };
+    // — Ranking por local de venda (30 dias) —
+    const porLocal={};
+    [...LOCAIS_VENDA,"Não informado"].forEach(l=>{ porLocal[l]={fat:0,qtd:0}; });
+    venPer.forEach(v=>{
+      const l=v.localVenda||"Não informado";
+      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0};
+      PRODUTOS.forEach(p=>{ const q=+v.itens[p.id].qtd||0,vl=+v.itens[p.id].valor||0; porLocal[l].fat+=q*vl; porLocal[l].qtd+=q; });
+    });
+    encPer.forEach(e=>{
+      const l=e.localVenda||"Não informado";
+      if(!porLocal[l]) porLocal[l]={fat:0,qtd:0};
+      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*PRECO_PADRAO; porLocal[l].qtd+=q; });
+    });
+    const rankingLocais=Object.entries(porLocal)
+      .map(([local,d])=>({local,...d}))
+      .filter(d=>d.qtd>0)
+      .sort((a,b)=>b.fat-a.fat);
+
+    return { sem, fatSem, despSem, liqSem, fat30, desp30, liq30, unid30, ticket, serie, ranking, rankingLocais, nVen:venPer.length, nEnc:encPer.length };
   },[vendas,encomendas,despesas]);
 
   const totaisGerais=useMemo(()=>{
@@ -376,6 +395,17 @@ export default function App() {
                 ))}
               </div>
               <div style={{marginBottom:14}}><label style={lbS}>Observações</label><textarea value={formEnc.observacoes} onChange={e=>setFormEnc(f=>({...f,observacoes:e.target.value}))} placeholder="Mensagem, restrições, endereço..." rows={2} style={{...inS,resize:"vertical",minHeight:52}}/></div>
+              <div style={{marginBottom:14}}>
+                <label style={lbS}>Local de venda</label>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {["", ...LOCAIS_VENDA].map(l=>(
+                    <button key={l} onClick={()=>setFormEnc(f=>({...f,localVenda:l}))}
+                      style={{padding:"5px 12px",borderRadius:20,border:`1.5px solid ${formEnc.localVenda===l?C.caramelo:C.creme}`,background:formEnc.localVenda===l?C.caramelo:C.white,color:formEnc.localVenda===l?C.white:C.caramelo,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"'Montserrat',sans-serif"}}>
+                      {l||"Não informado"}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div style={{display:"flex",gap:8}}>
                 <button onClick={salvarEnc} disabled={!podeSalvarEnc} style={{flex:1,padding:"11px",borderRadius:8,border:"none",background:podeSalvarEnc?C.marrom:"#ccc",color:C.white,fontFamily:"'Montserrat',sans-serif",fontWeight:700,fontSize:12,cursor:podeSalvarEnc?"pointer":"not-allowed"}}>
                   {salvando?"SALVANDO...":editEncId?"SALVAR ALTERAÇÕES":`ADICIONAR${totalFormEnc>0?` (${totalFormEnc} un.)`:""}`}
@@ -427,6 +457,17 @@ export default function App() {
                 );})}
               </div>
               {totalFormVen>0&&(<div style={{background:C.creme,borderRadius:8,padding:"10px 14px",marginBottom:12,display:"flex",justifyContent:"space-between"}}><span style={{fontWeight:600,color:C.marrom,fontSize:13}}>{totalFormVen} unidades</span><span style={{fontWeight:700,color:C.verde,fontSize:15}}>{fmtBRL(totalValVen)}</span></div>)}
+              <div style={{marginBottom:14}}>
+                <label style={lbS}>Local de venda</label>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {["", ...LOCAIS_VENDA].map(l=>(
+                    <button key={l} onClick={()=>setFormVen(f=>({...f,localVenda:l}))}
+                      style={{padding:"5px 12px",borderRadius:20,border:`1.5px solid ${formVen.localVenda===l?C.verde:C.creme}`,background:formVen.localVenda===l?C.verde:C.white,color:formVen.localVenda===l?C.white:C.verde,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"'Montserrat',sans-serif"}}>
+                      {l||"Não informado"}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div style={{display:"flex",gap:8}}>
                 <button onClick={salvarVen} disabled={!podeSalvarVen} style={{flex:1,padding:"11px",borderRadius:8,border:"none",background:podeSalvarVen?C.verde:"#ccc",color:C.white,fontFamily:"'Montserrat',sans-serif",fontWeight:700,fontSize:12,cursor:podeSalvarVen?"pointer":"not-allowed"}}>
                   {salvando?"SALVANDO...":editVenId?"SALVAR ALTERAÇÕES":`REGISTRAR${totalFormVen>0?` · ${fmtBRL(totalValVen)}`:""}`}
@@ -588,11 +629,12 @@ export default function App() {
                     </div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:obj.observacoes?6:0}}>
                       <span style={{background:C.creme,color:C.marrom,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>📅 {fmtData(obj.dataEntrega)}</span>
+                      {obj.localVenda&&<span style={{background:C.caramelo+"20",color:C.caramelo,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>📍 {obj.localVenda}</span>}
                       {PRODUTOS.map(p=>obj.qtd[p.id]>0&&(<span key={p.id} style={{background:p.cor+"20",color:p.cor,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>{p.emoji} {p.label}: {obj.qtd[p.id]}</span>))}
                     </div>
                     {obj.observacoes&&<p style={{margin:"4px 0 6px",fontSize:11,color:"#666",fontStyle:"italic"}}>💬 {obj.observacoes}</p>}
                     <div style={{display:"flex",gap:6,marginTop:8}}>
-                      <button onClick={()=>{setFormEnc({...obj,qtd:{...obj.qtd}});setEditEncId(obj.id);setAba("encomendas");window.scrollTo({top:0,behavior:"smooth"});}} style={bAS(C.caramelo)}>✏️ Editar</button>
+                      <button onClick={()=>{setFormEnc({...obj,qtd:{...obj.qtd},localVenda:obj.localVenda||""});setEditEncId(obj.id);setAba("encomendas");window.scrollTo({top:0,behavior:"smooth"});}} style={bAS(C.caramelo)}>✏️ Editar</button>
                       <button onClick={()=>removerEnc(obj.id)} style={bAS("#dc3545")}>🗑 Remover</button>
                     </div>
                   </div>
@@ -607,9 +649,12 @@ export default function App() {
                       <div><span style={{fontSize:9,fontWeight:700,color:"#aaa",textTransform:"uppercase",letterSpacing:1}}>💰 Venda Avulsa</span><p style={{margin:"2px 0 0",fontWeight:700,color:C.verde,fontSize:14}}>📅 {fmtData(obj.data)}</p>{obj.observacoes&&<p style={{margin:"1px 0 0",fontSize:11,color:"#888",fontStyle:"italic"}}>{obj.observacoes}</p>}</div>
                       <div style={{textAlign:"right"}}><p style={{margin:0,fontSize:11,color:"#888"}}>{totU} un.</p><p style={{margin:"2px 0 0",fontWeight:700,color:C.verde,fontSize:15}}>{fmtBRL(totV)}</p></div>
                     </div>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>{PRODUTOS.map(p=>+obj.itens[p.id].qtd>0&&(<span key={p.id} style={{background:p.cor+"20",color:p.cor,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>{p.emoji} {p.label}: {obj.itens[p.id].qtd} × {fmtBRL(obj.itens[p.id].valor)}</span>))}</div>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
+                      {obj.localVenda&&<span style={{background:C.verde+"20",color:C.verde,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>📍 {obj.localVenda}</span>}
+                      {PRODUTOS.map(p=>+obj.itens[p.id].qtd>0&&(<span key={p.id} style={{background:p.cor+"20",color:p.cor,borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>{p.emoji} {p.label}: {obj.itens[p.id].qtd} × {fmtBRL(obj.itens[p.id].valor)}</span>))}
+                    </div>
                     <div style={{display:"flex",gap:6}}>
-                      <button onClick={()=>{setFormVen({data:obj.data,observacoes:obj.observacoes,itens:{...obj.itens}});setEditVenId(obj.id);setAba("vendas");window.scrollTo({top:9999,behavior:"smooth"});}} style={bAS(C.caramelo)}>✏️ Editar</button>
+                      <button onClick={()=>{setFormVen({data:obj.data,observacoes:obj.observacoes,localVenda:obj.localVenda||"",itens:{...obj.itens}});setEditVenId(obj.id);setAba("vendas");window.scrollTo({top:9999,behavior:"smooth"});}} style={bAS(C.caramelo)}>✏️ Editar</button>
                       <button onClick={()=>removerVen(obj.id)} style={bAS("#dc3545")}>🗑 Remover</button>
                     </div>
                   </div>
@@ -678,7 +723,7 @@ export default function App() {
             </div>
 
             {/* Participação % */}
-            <div style={{background:C.white,borderRadius:12,padding:"16px 14px",boxShadow:"0 1px 5px rgba(0,0,0,.07)"}}>
+            <div style={{background:C.white,borderRadius:12,padding:"16px 14px",marginBottom:14,boxShadow:"0 1px 5px rgba(0,0,0,.07)"}}>
               <p style={{margin:"0 0 12px",fontSize:11,fontWeight:700,color:C.marrom,textTransform:"uppercase",letterSpacing:1}}>🍩 Participação por sabor</p>
               {dash.unid30===0?(<p style={{color:"#ccc",fontSize:12,textAlign:"center",margin:"8px 0"}}>Nenhuma venda registrada ainda.</p>):(<>
                 <div style={{display:"flex",height:12,borderRadius:99,overflow:"hidden",marginBottom:12}}>
@@ -688,6 +733,47 @@ export default function App() {
                   {dash.ranking.map(p=>(<div key={p.id} style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:"50%",background:p.cor,flexShrink:0}}/><span style={{fontSize:11,color:"#555"}}>{p.label}: <b>{dash.unid30>0?Math.round((p.qtd/dash.unid30)*100):0}%</b></span></div>))}
                 </div>
               </>)}
+            </div>
+
+            {/* Ranking por local de venda */}
+            <div style={{background:C.white,borderRadius:12,padding:"16px 14px",boxShadow:"0 1px 5px rgba(0,0,0,.07)"}}>
+              <p style={{margin:"0 0 12px",fontSize:11,fontWeight:700,color:C.marrom,textTransform:"uppercase",letterSpacing:1}}>📍 Desempenho por local — 30 dias</p>
+              {dash.rankingLocais.length===0?(
+                <p style={{color:"#ccc",fontSize:12,textAlign:"center",margin:"8px 0"}}>Nenhuma venda com local informado ainda.</p>
+              ):(()=>{
+                const maxFat = dash.rankingLocais[0].fat||1;
+                const totalFat = dash.rankingLocais.reduce((a,l)=>a+l.fat,0);
+                return dash.rankingLocais.map((l,i)=>(
+                  <div key={l.local} style={{marginBottom:12}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                      <span style={{fontSize:12,fontWeight:700,color:C.caramelo}}>
+                        {i===0?"🥇":i===1?"🥈":i===2?"🥉":"📍"} {l.local}
+                      </span>
+                      <div style={{textAlign:"right"}}>
+                        <span style={{fontSize:12,fontWeight:700,color:"#555"}}>{fmtBRL(l.fat)}</span>
+                        <span style={{fontSize:10,color:"#aaa",marginLeft:6}}>{l.qtd} un. · {totalFat>0?Math.round((l.fat/totalFat)*100):0}%</span>
+                      </div>
+                    </div>
+                    <div style={{background:"#F0E8DF",borderRadius:99,height:6,overflow:"hidden"}}>
+                      <div style={{width:`${(l.fat/maxFat)*100}%`,background:C.caramelo,height:"100%",borderRadius:99,transition:"width .4s"}}/>
+                    </div>
+                  </div>
+                ));
+              })()}
+
+              {/* Barra de participação por local */}
+              {dash.rankingLocais.length>0&&(()=>{
+                const totalFat=dash.rankingLocais.reduce((a,l)=>a+l.fat,0);
+                const cores=["#7A4A32","#5A6447","#8A9171","#5B2E1E","#4A6A8A","#aaa"];
+                return (<>
+                  <div style={{display:"flex",height:10,borderRadius:99,overflow:"hidden",margin:"14px 0 10px"}}>
+                    {dash.rankingLocais.map((l,i)=>(<div key={l.local} style={{width:`${(l.fat/totalFat)*100}%`,background:cores[i%cores.length]}}/>))}
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:5}}>
+                    {dash.rankingLocais.map((l,i)=>(<div key={l.local} style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:9,height:9,borderRadius:"50%",background:cores[i%cores.length],flexShrink:0}}/><span style={{fontSize:10,color:"#666"}}>{l.local}: <b>{totalFat>0?Math.round((l.fat/totalFat)*100):0}%</b></span></div>))}
+                  </div>
+                </>);
+              })()}
             </div>
           </div>
         )}
