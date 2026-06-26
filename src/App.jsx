@@ -12,10 +12,13 @@ const URL_DES = `${SUPABASE_URL}/rest/v1/despesas`;
 const C = { marrom:"#5B2E1E", caramelo:"#7A4A32", creme:"#E6D6C2", verde:"#5A6447", salvia:"#8A9171", cremedark:"#D4BFA0", bg:"#FAF6F1", white:"#FFFFFF", vermelho:"#A63228" };
 
 const PRODUTOS = [
-  { id:"ninho",      label:"Ninho c/ Nutella", emoji:"🍫", cor:C.salvia },
-  { id:"doceleit",   label:"Doce de Leite",    emoji:"🍯", cor:C.caramelo },
-  { id:"brigadeiro", label:"Brigadeiro",       emoji:"🎂", cor:C.marrom },
-  { id:"miettes",    label:"Miettes",          emoji:"✨", cor:C.verde },
+  { id:"ninho",         label:"Ninho c/ Nutella",  emoji:"🍫", cor:C.salvia,   preco:10.00 },
+  { id:"doceleit",      label:"Doce de Leite",     emoji:"🍯", cor:C.caramelo, preco:10.00 },
+  { id:"brigadeiro",    label:"Brigadeiro",        emoji:"🎂", cor:C.marrom,   preco:10.00 },
+  { id:"miettes",       label:"Miettes",           emoji:"✨", cor:C.verde,    preco:10.00 },
+  { id:"minibrownie",   label:"Mini Brownie",      emoji:"🍬", cor:"#A0522D",  preco:3.50  },
+  { id:"minimiettes",   label:"Mini Miettes",      emoji:"🌟", cor:"#6B8E5A",  preco:4.00  },
+  { id:"miettesamendoim",label:"Miettes Amendoim", emoji:"🥜", cor:"#8B6914",  preco:12.00 },
 ];
 
 const CATEGORIAS_DESP = [
@@ -61,15 +64,15 @@ function semanaAtual() {
   };
 }
 
-function dbEnc(r) { return { id:r.id, nome:r.nome, telefone:r.telefone||"", dataEntrega:r.data_entrega, status:r.status, observacoes:r.observacoes||"", localVenda:r.local_venda||"", qtd:{ ninho:r.qtd_ninho||0, doceleit:r.qtd_doceleit||0, brigadeiro:r.qtd_brigadeiro||0, miettes:r.qtd_miettes||0 } }; }
-function encDb(e) { return { id:e.id, nome:e.nome, telefone:e.telefone||null, data_entrega:e.dataEntrega, status:e.status, observacoes:e.observacoes||null, local_venda:e.localVenda||null, qtd_ninho:+e.qtd.ninho||0, qtd_doceleit:+e.qtd.doceleit||0, qtd_brigadeiro:+e.qtd.brigadeiro||0, qtd_miettes:+e.qtd.miettes||0 }; }
-function dbVen(r) { return { id:r.id, data:r.data, observacoes:r.observacoes||"", localVenda:r.local_venda||"", itens:{ ninho:{qtd:r.qtd_ninho||0,valor:+r.val_ninho||0}, doceleit:{qtd:r.qtd_doceleit||0,valor:+r.val_doceleit||0}, brigadeiro:{qtd:r.qtd_brigadeiro||0,valor:+r.val_brigadeiro||0}, miettes:{qtd:r.qtd_miettes||0,valor:+r.val_miettes||0} } }; }
-function venDb(v) { return { id:v.id, data:v.data, observacoes:v.observacoes||null, local_venda:v.localVenda||null, qtd_ninho:+v.itens.ninho.qtd||0, val_ninho:+v.itens.ninho.valor||0, qtd_doceleit:+v.itens.doceleit.qtd||0, val_doceleit:+v.itens.doceleit.valor||0, qtd_brigadeiro:+v.itens.brigadeiro.qtd||0, val_brigadeiro:+v.itens.brigadeiro.valor||0, qtd_miettes:+v.itens.miettes.qtd||0, val_miettes:+v.itens.miettes.valor||0 }; }
+function dbEnc(r) { return { id:r.id, nome:r.nome, telefone:r.telefone||"", dataEntrega:r.data_entrega, status:r.status, observacoes:r.observacoes||"", localVenda:r.local_venda||"", qtd:{ ninho:r.qtd_ninho||0, doceleit:r.qtd_doceleit||0, brigadeiro:r.qtd_brigadeiro||0, miettes:r.qtd_miettes||0, minibrownie:r.qtd_minibrownie||0, minimiettes:r.qtd_minimiettes||0, miettesamendoim:r.qtd_miettesamendoim||0 } }; }
+function encDb(e) { return { id:e.id, nome:e.nome, telefone:e.telefone||null, data_entrega:e.dataEntrega, status:e.status, observacoes:e.observacoes||null, local_venda:e.localVenda||null, qtd_ninho:+e.qtd.ninho||0, qtd_doceleit:+e.qtd.doceleit||0, qtd_brigadeiro:+e.qtd.brigadeiro||0, qtd_miettes:+e.qtd.miettes||0, qtd_minibrownie:+e.qtd.minibrownie||0, qtd_minimiettes:+e.qtd.minimiettes||0, qtd_miettesamendoim:+e.qtd.miettesamendoim||0 }; }
+function dbVen(r) { return { id:r.id, data:r.data, observacoes:r.observacoes||"", localVenda:r.local_venda||"", itens:{ ninho:{qtd:r.qtd_ninho||0,valor:+r.val_ninho||0}, doceleit:{qtd:r.qtd_doceleit||0,valor:+r.val_doceleit||0}, brigadeiro:{qtd:r.qtd_brigadeiro||0,valor:+r.val_brigadeiro||0}, miettes:{qtd:r.qtd_miettes||0,valor:+r.val_miettes||0}, minibrownie:{qtd:r.qtd_minibrownie||0,valor:+r.val_minibrownie||0}, minimiettes:{qtd:r.qtd_minimiettes||0,valor:+r.val_minimiettes||0}, miettesamendoim:{qtd:r.qtd_miettesamendoim||0,valor:+r.val_miettesamendoim||0} } }; }
+function venDb(v) { return { id:v.id, data:v.data, observacoes:v.observacoes||null, local_venda:v.localVenda||null, qtd_ninho:+v.itens.ninho.qtd||0, val_ninho:+v.itens.ninho.valor||0, qtd_doceleit:+v.itens.doceleit.qtd||0, val_doceleit:+v.itens.doceleit.valor||0, qtd_brigadeiro:+v.itens.brigadeiro.qtd||0, val_brigadeiro:+v.itens.brigadeiro.valor||0, qtd_miettes:+v.itens.miettes.qtd||0, val_miettes:+v.itens.miettes.valor||0, qtd_minibrownie:+v.itens.minibrownie.qtd||0, val_minibrownie:+v.itens.minibrownie.valor||0, qtd_minimiettes:+v.itens.minimiettes.qtd||0, val_minimiettes:+v.itens.minimiettes.valor||0, qtd_miettesamendoim:+v.itens.miettesamendoim.qtd||0, val_miettesamendoim:+v.itens.miettesamendoim.valor||0 }; }
 function dbDes(r) { return { id:r.id, data:r.data, categoria:r.categoria, fornecedor:r.fornecedor||"", valor:+r.valor||0, observacoes:r.observacoes||"" }; }
 function desDb(d) { return { id:d.id, data:d.data, categoria:d.categoria, fornecedor:d.fornecedor||null, valor:+d.valor||0, observacoes:d.observacoes||null }; }
 
-function resetEnc() { return { nome:"", telefone:"", dataEntrega:"", observacoes:"", localVenda:"", status:"Pendente", qtd:{ninho:0,doceleit:0,brigadeiro:0,miettes:0} }; }
-function resetVen() { return { data:hoje(), observacoes:"", localVenda:"", itens:{ ninho:{qtd:0,valor:PRECO_PADRAO}, doceleit:{qtd:0,valor:PRECO_PADRAO}, brigadeiro:{qtd:0,valor:PRECO_PADRAO}, miettes:{qtd:0,valor:PRECO_PADRAO} } }; }
+function resetEnc() { return { nome:"", telefone:"", dataEntrega:"", observacoes:"", localVenda:"", status:"Pendente", qtd:{ninho:0,doceleit:0,brigadeiro:0,miettes:0,minibrownie:0,minimiettes:0,miettesamendoim:0} }; }
+function resetVen() { return { data:hoje(), observacoes:"", localVenda:"", itens:{ ninho:{qtd:0,valor:10}, doceleit:{qtd:0,valor:10}, brigadeiro:{qtd:0,valor:10}, miettes:{qtd:0,valor:10}, minibrownie:{qtd:0,valor:3.50}, minimiettes:{qtd:0,valor:4.00}, miettesamendoim:{qtd:0,valor:12.00} } }; }
 function resetDes() { return { data:hoje(), categoria:"ingredientes", fornecedor:"Assaí", valor:"", observacoes:"" }; }
 
 // ─── Gráfico scrollável ───────────────────────────────────────────────────────
@@ -264,7 +267,7 @@ export default function App() {
     const desSem  = despesas.filter(d=>d.data>=sem.ini&&d.data<=sem.fim);
     let fatSem=0;
     venSem.forEach(v=>{ PRODUTOS.forEach(p=>{ fatSem+=(+v.itens[p.id].qtd||0)*(+v.itens[p.id].valor||0); }); });
-    encSem.forEach(e=>{ PRODUTOS.forEach(p=>{ fatSem+=(+e.qtd[p.id]||0)*PRECO_PADRAO; }); });
+    encSem.forEach(e=>{ PRODUTOS.forEach(p=>{ fatSem+=(+e.qtd[p.id]||0)*p.preco; }); });
     const despSem = desSem.reduce((a,d)=>a+(+d.valor||0),0);
     const liqSem  = fatSem - despSem;
 
@@ -275,7 +278,7 @@ export default function App() {
     let fat30=0, unid30=0;
     const porProduto={ninho:{qtd:0,rec:0},doceleit:{qtd:0,rec:0},brigadeiro:{qtd:0,rec:0},miettes:{qtd:0,rec:0}};
     venPer.forEach(v=>{ PRODUTOS.forEach(p=>{ const q=+v.itens[p.id].qtd||0,vl=+v.itens[p.id].valor||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*vl; fat30+=q*vl; unid30+=q; }); });
-    encPer.forEach(e=>{ PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*PRECO_PADRAO; fat30+=q*PRECO_PADRAO; unid30+=q; }); });
+    encPer.forEach(e=>{ PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*p.preco; fat30+=q*p.preco; unid30+=q; }); });
     const desp30 = desPer.reduce((a,d)=>a+(+d.valor||0),0);
     const liq30  = fat30 - desp30;
     const ticket = (venPer.length+encPer.length)>0?fat30/(venPer.length+encPer.length):0;
@@ -284,7 +287,7 @@ export default function App() {
     const diasMap={};
     for(let i=89;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); diasMap[d.toISOString().slice(0,10)]=0; }
     vendas.filter(v=>v.data>=corte90).forEach(v=>{ PRODUTOS.forEach(p=>{ diasMap[v.data]=(diasMap[v.data]||0)+(+v.itens[p.id].qtd||0)*(+v.itens[p.id].valor||0); }); });
-    encomendas.filter(e=>e.status==="Entregue"&&e.dataEntrega>=corte90).forEach(e=>{ let s=0; PRODUTOS.forEach(p=>{s+=(+e.qtd[p.id]||0)*PRECO_PADRAO;}); diasMap[e.dataEntrega]=(diasMap[e.dataEntrega]||0)+s; });
+    encomendas.filter(e=>e.status==="Entregue"&&e.dataEntrega>=corte90).forEach(e=>{ let s=0; PRODUTOS.forEach(p=>{s+=(+e.qtd[p.id]||0)*p.preco;}); diasMap[e.dataEntrega]=(diasMap[e.dataEntrega]||0)+s; });
     const serie=Object.entries(diasMap).map(([d,v])=>({l:`${d.slice(8)}/${d.slice(5,7)}`,v}));
 
     const ranking=PRODUTOS.map(p=>({...p,qtd:porProduto[p.id].qtd,rec:porProduto[p.id].rec})).sort((a,b)=>b.qtd-a.qtd);
@@ -300,7 +303,7 @@ export default function App() {
     encPer.forEach(e=>{
       const l=e.localVenda||"Não informado";
       if(!porLocal[l]) porLocal[l]={fat:0,qtd:0,prods:{ninho:0,doceleit:0,brigadeiro:0,miettes:0}};
-      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*PRECO_PADRAO; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
+      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*p.preco; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
     });
     const rankingLocais=Object.entries(porLocal)
       .map(([local,d])=>{
@@ -619,7 +622,7 @@ export default function App() {
             ):listaUnificada.map(({tipo,obj})=>{
               if(tipo==="enc"){ const sc=STATUS_COR[obj.status]||STATUS_COR["Pendente"];
                 const encUnid=PRODUTOS.reduce((a,p)=>a+(+obj.qtd[p.id]||0),0);
-                const encVal=encUnid*PRECO_PADRAO;
+                const encVal=PRODUTOS.reduce((a,p)=>a+(+obj.qtd[p.id]||0)*p.preco,0);
                 return (
                 <div key={"e"+obj.id} style={{background:C.white,borderRadius:10,marginBottom:10,boxShadow:"0 1px 5px rgba(0,0,0,.08)",borderLeft:`4px solid ${obj.status==="Entregue"?C.verde:obj.status==="Cancelado"?"#dc3545":C.marrom}`}}>
                   <div style={{padding:"13px 14px"}}>
