@@ -267,7 +267,7 @@ export default function App() {
     const desSem  = despesas.filter(d=>d.data>=sem.ini&&d.data<=sem.fim);
     let fatSem=0;
     venSem.forEach(v=>{ PRODUTOS.forEach(p=>{ fatSem+=(+v.itens[p.id].qtd||0)*(+v.itens[p.id].valor||0); }); });
-    encSem.forEach(e=>{ PRODUTOS.forEach(p=>{ fatSem+=(+e.qtd[p.id]||0)*p.preco; }); });
+    encSem.forEach(e=>{ PRODUTOS.forEach(p=>{ fatSem+=(+(e.qtd||{})[p.id]||0)*p.preco; }); });
     const despSem = desSem.reduce((a,d)=>a+(+d.valor||0),0);
     const liqSem  = fatSem - despSem;
 
@@ -278,7 +278,7 @@ export default function App() {
     let fat30=0, unid30=0;
     const porProduto={ninho:{qtd:0,rec:0},doceleit:{qtd:0,rec:0},brigadeiro:{qtd:0,rec:0},miettes:{qtd:0,rec:0}};
     venPer.forEach(v=>{ PRODUTOS.forEach(p=>{ const q=+v.itens[p.id].qtd||0,vl=+v.itens[p.id].valor||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*vl; fat30+=q*vl; unid30+=q; }); });
-    encPer.forEach(e=>{ PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*p.preco; fat30+=q*p.preco; unid30+=q; }); });
+    encPer.forEach(e=>{ PRODUTOS.forEach(p=>{ const q=+(e.qtd||{})[p.id]||0; porProduto[p.id].qtd+=q; porProduto[p.id].rec+=q*p.preco; fat30+=q*p.preco; unid30+=q; }); });
     const desp30 = desPer.reduce((a,d)=>a+(+d.valor||0),0);
     const liq30  = fat30 - desp30;
     const ticket = (venPer.length+encPer.length)>0?fat30/(venPer.length+encPer.length):0;
@@ -287,7 +287,7 @@ export default function App() {
     const diasMap={};
     for(let i=89;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); diasMap[d.toISOString().slice(0,10)]=0; }
     vendas.filter(v=>v.data>=corte90).forEach(v=>{ PRODUTOS.forEach(p=>{ diasMap[v.data]=(diasMap[v.data]||0)+(+v.itens[p.id].qtd||0)*(+v.itens[p.id].valor||0); }); });
-    encomendas.filter(e=>e.status==="Entregue"&&e.dataEntrega>=corte90).forEach(e=>{ let s=0; PRODUTOS.forEach(p=>{s+=(+e.qtd[p.id]||0)*p.preco;}); diasMap[e.dataEntrega]=(diasMap[e.dataEntrega]||0)+s; });
+    encomendas.filter(e=>e.status==="Entregue"&&e.dataEntrega>=corte90).forEach(e=>{ let s=0; PRODUTOS.forEach(p=>{s+=(+(e.qtd||{})[p.id]||0)*p.preco;}); diasMap[e.dataEntrega]=(diasMap[e.dataEntrega]||0)+s; });
     const serie=Object.entries(diasMap).map(([d,v])=>({l:`${d.slice(8)}/${d.slice(5,7)}`,v}));
 
     const ranking=PRODUTOS.map(p=>({...p,qtd:porProduto[p.id].qtd,rec:porProduto[p.id].rec})).sort((a,b)=>b.qtd-a.qtd);
@@ -303,7 +303,7 @@ export default function App() {
     encPer.forEach(e=>{
       const l=e.localVenda||"Não informado";
       if(!porLocal[l]) porLocal[l]={fat:0,qtd:0,prods:{ninho:0,doceleit:0,brigadeiro:0,miettes:0}};
-      PRODUTOS.forEach(p=>{ const q=+e.qtd[p.id]||0; porLocal[l].fat+=q*p.preco; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
+      PRODUTOS.forEach(p=>{ const q=+(e.qtd||{})[p.id]||0; porLocal[l].fat+=q*p.preco; porLocal[l].qtd+=q; porLocal[l].prods[p.id]+=q; });
     });
     const rankingLocais=Object.entries(porLocal)
       .map(([local,d])=>{
@@ -318,7 +318,7 @@ export default function App() {
 
   const totaisGerais=useMemo(()=>{
     const r={ninho:0,doceleit:0,brigadeiro:0,miettes:0};
-    encomendas.filter(e=>e.status!=="Cancelado"&&e.status!=="Entregue").forEach(e=>PRODUTOS.forEach(p=>{r[p.id]+=+e.qtd[p.id]||0;}));
+    encomendas.filter(e=>e.status!=="Cancelado"&&e.status!=="Entregue").forEach(e=>PRODUTOS.forEach(p=>{r[p.id]+=+(e.qtd||{})[p.id]||0;}));
     return r;
   },[encomendas]);
 
