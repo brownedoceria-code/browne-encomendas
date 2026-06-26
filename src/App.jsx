@@ -1,3 +1,4 @@
+// v2.1 — build fix
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 // ─── Supabase ─────────────────────────────────────────────────────────────────
