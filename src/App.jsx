@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { useState, useMemo, useEffect, useCallbck, useRef } from "react";
 
 // ─── Supabase ─────────────────────────────────────────────────────────────────
 const SUPABASE_URL = "https://ycyqdcpamifghuludkjr.supabase.co";
