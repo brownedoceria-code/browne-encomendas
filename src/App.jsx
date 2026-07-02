@@ -40,22 +40,25 @@ const ST_COR = {
 };
 
 const gId   = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-const hoje  = () => new Date().toISOString().slice(0,10);
+const hoje  = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 const fData = iso => { if(!iso) return "—"; const [y,m,d]=iso.split("-"); return `${d}/${m}`; };
 const fDataFull = iso => { if(!iso) return "—"; const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; };
 const fBRL  = v => `R$ ${Number(v).toFixed(2).replace(".",",")}`;
 const fBRLs = v => v===0?"":v>=1000?`R$${(v/1000).toFixed(1)}k`:`R$${Number(v).toFixed(0)}`;
-const nAgo  = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
+const nAgo  = n => { const d=new Date(); d.setDate(d.getDate()-n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 
 function semanaAtual() {
-  const now=new Date();
-  const dow=now.getDay(); // 0=dom,1=seg,2=ter,...,6=sab
-  // Quantos dias desde a última terça (dow=2)
-  // ter=0, qua=1, qui=2, sex=3, sab=4, dom=5, seg=6
+  const now = new Date();
+  // Usa data local (evita deslocamento UTC vs Brasília)
+  const dow = now.getDay(); // 0=dom,1=seg,2=ter,...,6=sab
+  // Dias desde a última terça (dow=2)
   const diasDesdeTerc = (dow + 7 - 2) % 7;
-  const ini=new Date(now); ini.setDate(now.getDate()-diasDesdeTerc);
-  const fim=new Date(ini); fim.setDate(ini.getDate()+6);
-  return { ini:ini.toISOString().slice(0,10), fim:fim.toISOString().slice(0,10) };
+  const ini = new Date(now);
+  ini.setDate(now.getDate() - diasDesdeTerc);
+  const fim = new Date(ini);
+  fim.setDate(ini.getDate() + 6);
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  return { ini: fmt(ini), fim: fmt(fim) };
 }
 
 const qE = (e,pid) => +(e?.qtd?.[pid] ?? 0);
