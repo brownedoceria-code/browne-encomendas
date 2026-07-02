@@ -48,8 +48,12 @@ const fBRLs = v => v===0?"":v>=1000?`R$${(v/1000).toFixed(1)}k`:`R$${Number(v).t
 const nAgo  = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
 
 function semanaAtual() {
-  const now=new Date(), dow=now.getDay(), dias=(dow+5)%7;
-  const ini=new Date(now); ini.setDate(now.getDate()-dias);
+  const now=new Date();
+  const dow=now.getDay(); // 0=dom,1=seg,2=ter,...,6=sab
+  // Quantos dias desde a última terça (dow=2)
+  // ter=0, qua=1, qui=2, sex=3, sab=4, dom=5, seg=6
+  const diasDesdeTerc = (dow + 7 - 2) % 7;
+  const ini=new Date(now); ini.setDate(now.getDate()-diasDesdeTerc);
   const fim=new Date(ini); fim.setDate(ini.getDate()+6);
   return { ini:ini.toISOString().slice(0,10), fim:fim.toISOString().slice(0,10) };
 }
